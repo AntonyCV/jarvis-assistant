@@ -1,5 +1,7 @@
 from jarvis.core.state import JarvisState
 from jarvis.commands.registry import CommandRegistry
+from jarvis.commands.interpreter import CommandInterpreter
+
 from jarvis.commands.system import say_hello, show_time, show_date
 from jarvis.commands.applications import (
     open_chrome,
@@ -12,6 +14,7 @@ class JarvisAssistant:
     def __init__(self):
         self.state = JarvisState()
         self.registry = CommandRegistry()
+        self.interpreter = CommandInterpreter()
 
         self.register_commands()
 
@@ -30,10 +33,16 @@ class JarvisAssistant:
         print()
 
         while self.state.active:
-            command = input("Tú: ").strip().lower()
+            user_input = input("Tú: ").strip()
 
-            if command == "salir":
+            if user_input.lower() == "salir":
                 self.stop()
+                continue
+
+            command = self.interpreter.interpret(user_input)
+
+            if command is None:
+                print("JARVIS: No entendí lo que dijiste.")
                 continue
 
             if not self.registry.execute(command):
