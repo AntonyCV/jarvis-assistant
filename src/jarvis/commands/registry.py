@@ -9,7 +9,6 @@ class CommandRegistry:
         command = self.commands.get(name)
 
         if command is None:
-            return False
+            return None
 
-        command()
-        return True
+        return command()

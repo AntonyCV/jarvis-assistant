@@ -1,12 +1,15 @@
 from jarvis.core.state import JarvisState
 from jarvis.commands.registry import CommandRegistry
 from jarvis.commands.interpreter import CommandInterpreter
+from jarvis.voice.listener import VoiceListener
+from jarvis.voice.speaker import VoiceSpeaker
 
 from jarvis.commands.system import say_hello, show_time, show_date
 from jarvis.commands.applications import (
     open_chrome,
     open_notepad,
     open_calculator,
+    close_calculator,
 )
 
 
@@ -15,6 +18,8 @@ class JarvisAssistant:
         self.state = JarvisState()
         self.registry = CommandRegistry()
         self.interpreter = CommandInterpreter()
+        self.voice_listener = VoiceListener()
+        self.voice_speaker = VoiceSpeaker()
 
         self.register_commands()
 
@@ -26,6 +31,7 @@ class JarvisAssistant:
         self.registry.register("chrome", open_chrome)
         self.registry.register("notepad", open_notepad)
         self.registry.register("calculadora", open_calculator)
+        self.registry.register("cerrar_calculadora", close_calculator)
 
     def start(self):
         print("Iniciando JARVIS...")
@@ -33,20 +39,31 @@ class JarvisAssistant:
         print()
 
         while self.state.active:
-            user_input = input("Tú: ").strip()
+            user_input = self.voice_listener.listen()
 
-            if user_input.lower() == "salir":
+            if not user_input:
+                self.voice_speaker.speak("No detecté ninguna frase.")
+                continue
+
+            print(f"Tú: {user_input}")
+
+            if self.interpreter.normalize(user_input) == "salir":
                 self.stop()
                 continue
 
             command = self.interpreter.interpret(user_input)
 
             if command is None:
-                print("JARVIS: No entendí lo que dijiste.")
+                self.voice_speaker.speak("No entendí lo que dijiste.")
                 continue
 
-            if not self.registry.execute(command):
-                print("JARVIS: No conozco ese comando.")
+            response = self.registry.execute(command)
+
+            if response is None:
+                self.voice_speaker.speak("No conozco ese comando.")
+                continue
+
+            self.voice_speaker.speak(response)
 
     def stop(self):
         print("JARVIS: Cerrando JARVIS...")

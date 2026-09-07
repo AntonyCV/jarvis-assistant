@@ -3,14 +3,24 @@ import subprocess
 
 def open_chrome():
     subprocess.Popen("start chrome", shell=True)
-    print("JARVIS: Abriendo Google Chrome.")
+    return "Abriendo Google Chrome."
 
 
 def open_notepad():
     subprocess.Popen("notepad.exe")
-    print("JARVIS: Abriendo el Bloc de notas.")
+    return "Abriendo el Bloc de notas."
 
 
 def open_calculator():
     subprocess.Popen("calc.exe")
-    print("JARVIS: Abriendo la calculadora.")
+    return "Abriendo la calculadora."
+
+
+def close_calculator():
+    subprocess.run(
+        ["taskkill", "/IM", "CalculatorApp.exe", "/F"],
+        capture_output=True,
+        text=True,
+    )
+
+    return "Cerrando la calculadora."
