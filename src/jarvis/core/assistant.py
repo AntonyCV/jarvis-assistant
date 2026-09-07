@@ -1,7 +1,11 @@
 from jarvis.core.state import JarvisState
 from jarvis.commands.registry import CommandRegistry
-from jarvis.commands.system import show_time, say_hello
-from jarvis.commands.applications import open_chrome
+from jarvis.commands.system import say_hello, show_time, show_date
+from jarvis.commands.applications import (
+    open_chrome,
+    open_notepad,
+    open_calculator,
+)
 
 
 class JarvisAssistant:
@@ -14,7 +18,11 @@ class JarvisAssistant:
     def register_commands(self):
         self.registry.register("hola", say_hello)
         self.registry.register("hora", show_time)
+        self.registry.register("fecha", show_date)
+
         self.registry.register("chrome", open_chrome)
+        self.registry.register("notepad", open_notepad)
+        self.registry.register("calculadora", open_calculator)
 
     def start(self):
         print("Iniciando JARVIS...")
