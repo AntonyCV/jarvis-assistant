@@ -3,3 +3,4 @@ sounddevice
 numpy
 pyttsx3
 google-genai
+pydantic
