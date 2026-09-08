@@ -3,7 +3,13 @@ import unicodedata
 
 
 class CommandInterpreter:
+    
     def __init__(self):
+        self.corrections = {
+            "dirime": "dime",
+            "dijime": "dime",
+            "que horas": "que hora",
+}
         self.aliases = {
             # Saludos
             "hola": "hola",
@@ -72,7 +78,11 @@ class CommandInterpreter:
 
         text = re.sub(r"\s+", " ", text)
 
+        for wrong, correct in self.corrections.items():
+            text = text.replace(wrong, correct)
+
         return text.strip()
+    
 
     def interpret(self, text):
         text = self.normalize(text)
