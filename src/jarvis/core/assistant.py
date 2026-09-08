@@ -7,6 +7,7 @@ from jarvis.voice.speaker import VoiceSpeaker
 from jarvis.commands.system import say_hello, show_time, show_date
 from jarvis.commands.applications import (
     open_chrome,
+    close_chrome,
     open_notepad,
     open_calculator,
     close_calculator,
@@ -24,14 +25,16 @@ class JarvisAssistant:
         self.register_commands()
 
     def register_commands(self):
-        self.registry.register("hola", say_hello)
-        self.registry.register("hora", show_time)
-        self.registry.register("fecha", show_date)
+        self.registry.register("simple", "hola", say_hello)
+        self.registry.register("simple", "hora", show_time)
+        self.registry.register("simple", "fecha", show_date)
 
-        self.registry.register("chrome", open_chrome)
-        self.registry.register("notepad", open_notepad)
-        self.registry.register("calculadora", open_calculator)
-        self.registry.register("cerrar_calculadora", close_calculator)
+        self.registry.register("open", "chrome", open_chrome)
+        self.registry.register("close", "chrome", close_chrome)
+
+        self.registry.register("open", "notepad", open_notepad)
+        self.registry.register("open", "calculadora", open_calculator)
+        self.registry.register("close", "calculadora", close_calculator)
 
     def start(self):
         print("Iniciando JARVIS...")
@@ -51,13 +54,26 @@ class JarvisAssistant:
                 self.stop()
                 continue
 
-            command = self.interpreter.interpret(user_input)
+            intent = self.interpreter.interpret(user_input)
 
-            if command is None:
+            if intent is None:
                 self.voice_speaker.speak("No entendí lo que dijiste.")
                 continue
 
-            response = self.registry.execute(command)
+            if intent["type"] == "command":
+                response = self.registry.execute(
+                    "simple",
+                    intent["command"],
+                )
+
+            elif intent["type"] == "application":
+                response = self.registry.execute(
+                    intent["action"],
+                    intent["application"],
+                )
+
+            else:
+                response = None
 
             if response is None:
                 self.voice_speaker.speak("No conozco ese comando.")

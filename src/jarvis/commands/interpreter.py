@@ -3,66 +3,50 @@ import unicodedata
 
 
 class CommandInterpreter:
-    
     def __init__(self):
+        self.applications = {
+            "chrome": "chrome",
+            "navegador": "chrome",
+            "google": "chrome",
+
+            "calculadora": "calculadora",
+
+            "notepad": "notepad",
+            "bloc de notas": "notepad",
+            "bloque de notas": "notepad",
+        }
+
+        self.actions = {
+            "abrir": "open",
+            "abre": "open",
+            "abrime": "open",
+
+            "cerrar": "close",
+            "cierra": "close",
+            "cierro": "close",
+        }
+
         self.corrections = {
             "dirime": "dime",
             "dijime": "dime",
-            "que horas": "que hora",
-}
-        self.aliases = {
-            # Saludos
+            "sierra": "cierra",
+        }
+
+        self.simple_commands = {
             "hola": "hola",
             "buenas": "hola",
             "hey": "hola",
 
-            # Hora
             "hora": "hora",
             "que hora es": "hora",
             "dime la hora": "hora",
             "dime que hora es": "hora",
-            "que horas": "hora",
 
-            # Fecha
             "fecha": "fecha",
             "que fecha es": "fecha",
             "que dia es": "fecha",
             "dime la fecha": "fecha",
             "dime que dia es": "fecha",
-
-            # Chrome
-            "chrome": "chrome",
-            "abre chrome": "chrome",
-            "abrir chrome": "chrome",
-            "abre el navegador": "chrome",
-            "abrir el navegador": "chrome",
-            "abrime el navegador": "chrome",
-            "abre google": "chrome",
-
-            # Bloc de notas
-            "notepad": "notepad",
-            "bloc de notas": "notepad",
-            "bloque de notas": "notepad",
-            "abre el bloc de notas": "notepad",
-            "abrir el bloc de notas": "notepad",
-            "abrime el bloc de notas": "notepad",
-            "abre el bloque de notas": "notepad",
-            "abrir el bloque de notas": "notepad",
-
-            # Calculadora
-            "calculadora": "calculadora",
-            "abre la calculadora": "calculadora",
-            "abrir la calculadora": "calculadora",
-            "abrime la calculadora": "calculadora",
-
-            # Cerrar calculadora
-            "cierra la calculadora": "cerrar_calculadora",
-            "cerrar la calculadora": "cerrar_calculadora",
-            "cierra calculadora": "cerrar_calculadora",
-            "cerrar calculadora": "cerrar_calculadora",
-            "cierro la calculadora": "cerrar_calculadora",
-            "cerrar calculadora": "cerrar_calculadora",
-            "cierra la calculadora": "cerrar_calculadora",
         }
 
     def normalize(self, text):
@@ -82,27 +66,44 @@ class CommandInterpreter:
             text = text.replace(wrong, correct)
 
         return text.strip()
-    
 
     def interpret(self, text):
         text = self.normalize(text)
 
-        # Primero buscamos coincidencias exactas
-        if text in self.aliases:
-            return self.aliases[text]
+        # Comandos simples
+        if text in self.simple_commands:
+            return {
+                "type": "command",
+                "command": self.simple_commands[text],
+            }
 
-        # Después buscamos frases completas dentro de la oración
-        # Solo se permiten aliases de más de una palabra.
         words = text.split()
 
-        for phrase, command in self.aliases.items():
-            phrase_words = phrase.split()
+        action = None
+        application = None
 
-            if len(phrase_words) > 1:
-                if self._contains_phrase(words, phrase_words):
-                    return command
+        # Detectar acción
+        for word in words:
+            if word in self.actions:
+                action = self.actions[word]
+                break
 
-        return None
+        # Detectar aplicación
+        for application_name, application_id in self.applications.items():
+            application_words = application_name.split()
+
+            if self._contains_phrase(words, application_words):
+                application = application_id
+                break
+
+        if action is None or application is None:
+            return None
+
+        return {
+            "type": "application",
+            "action": action,
+            "application": application,
+        }
 
     def _contains_phrase(self, words, phrase_words):
         phrase_length = len(phrase_words)
