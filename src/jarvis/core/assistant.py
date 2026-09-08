@@ -9,6 +9,7 @@ from jarvis.commands.applications import (
     open_chrome,
     close_chrome,
     open_notepad,
+    close_notepad,
     open_calculator,
     close_calculator,
 )
@@ -33,6 +34,7 @@ class JarvisAssistant:
         self.registry.register("close", "chrome", close_chrome)
 
         self.registry.register("open", "notepad", open_notepad)
+        self.registry.register("close", "notepad", close_notepad)
         self.registry.register("open", "calculadora", open_calculator)
         self.registry.register("close", "calculadora", close_calculator)
 
