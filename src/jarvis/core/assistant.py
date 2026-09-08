@@ -47,16 +47,31 @@ class JarvisAssistant:
             user_input = self.voice_listener.listen()
 
             if not user_input:
-                self.voice_speaker.speak("No detecté ninguna frase.")
                 continue
 
             print(f"Tú: {user_input}")
 
-            if self.interpreter.normalize(user_input) == "salir":
+            normalized_input = self.interpreter.normalize(user_input)
+            words = normalized_input.split()
+
+            if "jarvis" not in words:
+                continue
+
+            jarvis_index = words.index("jarvis")
+
+            command_words = words[jarvis_index + 1:]
+
+            if not command_words:
+                self.voice_speaker.speak("Te escucho.")
+                continue
+
+            command_text = " ".join(command_words)
+
+            if command_text == "salir":
                 self.stop()
                 continue
 
-            intent = self.interpreter.interpret(user_input)
+            intent = self.interpreter.interpret(command_text)
 
             if intent is None:
                 self.voice_speaker.speak("No entendí lo que dijiste.")

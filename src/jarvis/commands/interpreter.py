@@ -17,19 +17,29 @@ class CommandInterpreter:
         }
 
         self.actions = {
+            # Abrir
             "abrir": "open",
             "abre": "open",
             "abrime": "open",
+            "abreme": "open",
+            "abras": "open",
+            "abres" : "open",
 
+            # Cerrar
             "cerrar": "close",
             "cierra": "close",
             "cierro": "close",
-        }
+            "cierras": "close",
+            "cierres": "close",
+}
 
         self.corrections = {
             "dirime": "dime",
             "dijime": "dime",
             "sierra": "cierra",
+            "blog": "bloc",
+            "saliro": "salir",
+
         }
 
         self.simple_commands = {

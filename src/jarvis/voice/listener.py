@@ -12,7 +12,7 @@ class VoiceListener:
         self,
         sample_rate=16000,
         silence_threshold=0.01,
-        silence_duration=0.8,
+        silence_duration=1.2,
         max_duration=8,
         pre_buffer_duration=0.5,
     ):
