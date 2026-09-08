@@ -25,7 +25,7 @@ class VoiceListener:
         print("JARVIS: Cargando modelo de reconocimiento de voz...")
 
         self.model = WhisperModel(
-            "base",
+            "small",
             device="cpu",
             compute_type="int8",
         )
@@ -52,6 +52,7 @@ class VoiceListener:
             channels=1,
             dtype="float32",
             blocksize=1024,
+            device=1,
         ) as stream:
 
             while True:
