@@ -54,6 +54,9 @@ class CommandInterpreter:
             "cerrar la calculadora": "cerrar_calculadora",
             "cierra calculadora": "cerrar_calculadora",
             "cerrar calculadora": "cerrar_calculadora",
+            "cierro la calculadora": "cerrar_calculadora",
+            "cerrar calculadora": "cerrar_calculadora",
+            "cierra la calculadora": "cerrar_calculadora",
         }
 
     def normalize(self, text):
