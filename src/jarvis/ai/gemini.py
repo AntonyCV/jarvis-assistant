@@ -1,4 +1,10 @@
+from pydantic import BaseModel
 from google import genai
+
+
+class JarvisIntent(BaseModel):
+    action: str
+    application: str
 
 
 class GeminiInterpreter:
@@ -15,8 +21,6 @@ Tu única función es interpretar la intención del usuario.
 NO debes ejecutar comandos.
 NO debes inventar aplicaciones.
 NO debes devolver explicaciones.
-
-Debes responder únicamente con JSON válido.
 
 Acciones permitidas:
 - open
@@ -47,6 +51,10 @@ Usuario: {text}
         response = self.client.models.generate_content(
             model=self.model,
             contents=prompt,
+            config={
+                "response_mime_type": "application/json",
+                "response_schema": JarvisIntent,
+            },
         )
 
-        return response.text
+        return JarvisIntent.model_validate_json(response.text)
