@@ -3,6 +3,7 @@ from jarvis.commands.registry import CommandRegistry
 from jarvis.commands.interpreter import CommandInterpreter
 from jarvis.voice.listener import VoiceListener
 from jarvis.voice.speaker import VoiceSpeaker
+from jarvis.ai.gemini import GeminiInterpreter
 
 from jarvis.commands.system import say_hello, show_time, show_date
 from jarvis.commands.applications import (
@@ -20,9 +21,10 @@ class JarvisAssistant:
         self.state = JarvisState()
         self.registry = CommandRegistry()
         self.interpreter = CommandInterpreter()
+        self.gemini = GeminiInterpreter()
         self.voice_listener = VoiceListener()
         self.voice_speaker = VoiceSpeaker()
-
+        
         self.register_commands()
 
     def register_commands(self):
@@ -71,26 +73,16 @@ class JarvisAssistant:
                 self.stop()
                 continue
 
-            intent = self.interpreter.interpret(command_text)
+            intent = self.gemini.interpret(command_text)
 
             if intent is None:
                 self.voice_speaker.speak("No entendí lo que dijiste.")
                 continue
 
-            if intent["type"] == "command":
-                response = self.registry.execute(
-                    "simple",
-                    intent["command"],
-                )
-
-            elif intent["type"] == "application":
-                response = self.registry.execute(
-                    intent["action"],
-                    intent["application"],
-                )
-
-            else:
-                response = None
+            response = self.registry.execute(
+                intent.action,
+                intent.application,
+            )
 
             if response is None:
                 self.voice_speaker.speak("No conozco ese comando.")
